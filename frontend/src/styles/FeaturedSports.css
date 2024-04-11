@@ -1,0 +1,81 @@
+.featured-activities {
+    padding: 50px 0;
+    text-align: center;
+    background: 
+    url('../assets/bck.jpg') center center/cover;
+     
+}
+
+
+
+
+
+.featured-activities h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.activity-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.activity-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.activity-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px 10px 0 0;
+}
+
+.activity-details {
+    padding: 20px;
+}
+
+.activity-details h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.activity-details p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.activity-link {
+    display: inline-block;
+    background-color: #ff5733;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.activity-link:hover {
+    background-color: #ff8555;
+}
+
+
+
+.sign-up-message {
+    margin-top: 20px; 
+    text-align: center; 
+  }
+  
+  .sign-up-message p {
+    font-size: 18px;
+    color: #333;
+    background-color: green; 
+  }
+  
+  .sign-up-message p strong {
+    color: red; 
+  }

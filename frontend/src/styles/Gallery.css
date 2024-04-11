@@ -1,0 +1,152 @@
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  margin-left: 130px;
+  background-color: aqua;
+  margin-top: 60px;
+}
+
+.gallery-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-top: 10px;
+  min-height: 100vh;
+  padding: 20px;
+  margin-left: 130px;
+}
+.user-info {
+  display: flex;
+  
+  flex-direction: column;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  
+}
+
+.profile-pic {
+  width: 30px; 
+  height: 30px; 
+  border-radius: 50%; 
+  margin-right: 5px; 
+}
+
+.full-name {
+  font-weight: bold;
+  margin-right: 10px; 
+}
+
+.post-date {
+  font-size: 0.8rem; 
+  color: #666; 
+}
+
+
+.upload-container {
+  margin-bottom: 20px;
+}
+
+.upload-container button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.upload-container button:hover {
+  background-color: #0056b3;
+}
+
+.post {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  width: 300px;
+}
+
+.post img {
+  max-width: 100%;
+}
+
+.reactions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.reactions button {
+  
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: black;
+}
+
+.comment-input {
+  margin-top: 10px;
+  display: flex;
+}
+
+.comment-input input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.comment-input button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  margin-left: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.comment-input button:hover {
+  background-color: #0056b3;
+}
+
+.comments-container {
+  margin-top: 10px;
+  max-height: 50px;
+}
+
+
+.comments {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 0.8rem; 
+}
+
+.comments p {
+  margin: 5px 0;
+  padding: 5px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+.comment-input .profile-pic {
+  height: 20px; 
+}
+
+.comment-input input[type="text"] {
+height: 20px; 
+}
+
+@media screen and (max-width: 768px) {
+  .header {
+    margin-left: 50px;
+  }  
+
+  .gallery-container {
+    margin-left: 50px;
+  }
+}
+ 

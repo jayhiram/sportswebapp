@@ -1,0 +1,162 @@
+.chatroom-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.chatroom {
+  width: 80%;
+  height: 80%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.chatroom-header {
+  background-color: #333;
+  color: #fff;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.5rem;
+}
+
+.leave-btn {
+  background-color: #fff;
+  color: #333;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.leave-btn:hover {
+  background-color: #ccc;
+}
+
+.chatroom-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.chatroom-sidebar {
+  width: 20%;
+  background-color: #f4f4f4;
+  padding: 1rem;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.icon {
+  margin-right: 0.5rem;
+}
+
+h2, p {
+  margin: 0;
+}
+
+.room-users {
+  list-style-type: none;
+  padding: 0;
+}
+
+.message {
+  margin-bottom: 1rem;
+}
+
+.incoming {
+  text-align: left;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.outgoing {
+  text-align: left;
+  background-color: #87a9ce;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.username {
+  font-size: smaller;
+}
+
+.timestamp {
+  margin-left: 10px;
+  font-style: italic;
+  font-size: x-small;
+}
+
+.text {
+  margin: 0;
+  font-weight: bold;
+  font-size: smaller;
+}
+
+.message-thread {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+ 
+}
+
+.chatroom-form-container {
+
+  padding: 1rem;
+  background-color: #f4f4f4;
+  border-top: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+}
+
+#chat-form {
+  display: flex;
+  position: relative;
+  align-items: center;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+}
+
+.fa-paper-plane {
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+#chat-form button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+#chat-form button:hover {
+  background-color: #555;
+}

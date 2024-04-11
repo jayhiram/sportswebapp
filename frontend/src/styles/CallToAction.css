@@ -1,0 +1,66 @@
+
+
+.call-to-action {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.call-to-action h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.benefits-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.benefits-list li {
+    text-align: center;
+}
+
+.benefits-list img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: block;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease
+}
+.benefits-list img:hover {
+    transform: scale(1.05);
+}
+.benefits-list h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #ff5733;
+}
+
+.benefits-list p {
+    font-size: 1rem;
+    color: #888;
+}
+
+.signup-button {
+    display: inline-block;
+    background-color: none;
+    color: red;
+    padding: 5px 10px;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin: 20px auto;
+    text-align: center;
+    width: fit-content;
+}
+
+.signup-button:hover {
+    background-color: #ff8555;
+}

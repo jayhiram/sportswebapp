@@ -1,0 +1,93 @@
+.hero-section {
+    text-align: center;
+    padding: 50px 0;
+    
+}
+
+.hero-content {
+    margin-bottom: 30px;
+    margin-top: 20px;
+    color: black;
+}
+
+.hero-content h1 {
+    color: #eb1212;
+    margin-top: 80px;
+}
+
+.hero-content p {
+   font-size: medium; 
+}
+
+.hero-content h2 {
+    color: red;
+    margin-top: 20px;
+}
+
+.animate-line {
+    display: inline-flex;
+    opacity: 0;
+    animation: slideIn 4s ease forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.hero-images {
+    display: flex;
+    justify-content: space-between; /* Adjusted */
+    align-items: center; /* Added */
+    flex-wrap: wrap; /* Added */
+}
+
+.images {
+    display: flex;
+    gap: 40px;
+    justify-content: center; /* Added */
+    flex-wrap: wrap; /* Added */
+}
+
+.image-container {
+    position: relative;
+    width: 45%; /* Adjusted */
+    max-width: 300px; /* Added */
+    height: 250px;
+    overflow: hidden;
+    margin-bottom: 20px; /* Added */
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.image-container:hover .overlay {
+    opacity: 1;
+}
+
+.image-container:hover img {
+    transform: scale(1.1); 
+}

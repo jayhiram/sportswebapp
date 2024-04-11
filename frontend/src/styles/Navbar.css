@@ -1,0 +1,115 @@
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: black;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    width: 100%;
+    z-index: 1000;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    margin: 0;
+    color: white;
+}
+
+.middle {
+    color: red;
+}
+
+.menu {
+    list-style: none;
+    display: flex;
+    gap: 60px;
+    margin: 0;
+    padding: 0;
+}
+
+.menu li {
+    position: relative;
+}
+
+.menu li a {
+    text-decoration: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s;
+    
+}
+
+.menu li a svg {
+    margin-right: 5px; 
+    margin-bottom: 5px;
+}
+
+.menu li a:hover {
+    color: red;
+}
+
+.search-icon {
+    color: white;
+}
+
+.signin-btn {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-right: 50px;
+}
+
+.dropdown {
+    position: relative;
+    cursor: pointer;
+}
+
+.submenu {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: -50%;
+    background-color: rgb(177, 183, 14);
+    border-radius: 4px;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 999;
+    width: 300%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown.open .submenu {
+    opacity: 1;
+    visibility: visible;
+}
+
+.submenu li {
+    list-style: none;
+    margin: 5px 0;
+}
+
+.submenu li a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.submenu li a:hover {
+    color: red;
+}
+
+

@@ -1,0 +1,40 @@
+.search-bar {
+  position: relative;
+  width: 300px; 
+  margin: 20px;
+}
+
+.search-bar input {
+  width: calc(100% - 30px); 
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 15px;
+  outline: none;
+}
+
+.search-bar::after {
+  content: "\f002"; 
+  font-family: "Font Awesome 5 Free"; 
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #aaa;
+  pointer-events: none;
+}
+
+.search-bar button {
+  position: absolute;
+  right: 0;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 15px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.search-bar button:hover {
+  background-color: rgb(149, 104, 104);
+}

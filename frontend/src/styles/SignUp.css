@@ -1,0 +1,68 @@
+
+
+.sign-up-container {
+    width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sign-up-container h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .sign-up-container label {
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .sign-up-container input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .sign-up-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .sign-up-container button:hover {
+    background-color: #0056b3;
+  }
+  
+  .sign-up-container p {
+    margin-top: 15px;
+    font-size: 14px;
+  }
+  
+  .sign-up-container span {
+    color: #007bff;
+    cursor: pointer;
+  }
+
+  .terms-checkbox {
+    display: flex;
+    justify-content: space-between;
+align-items: center;
+
+    
+  }
+  
+  .terms-checkbox label {
+    margin-right: 500px;
+    flex-grow: 1;
+    
+  }
+  

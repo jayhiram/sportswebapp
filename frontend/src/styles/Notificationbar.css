@@ -1,0 +1,285 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0b0b0b;
+  color: #fff;
+  padding: 0 20px;
+  z-index: 1000;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  position: relative;
+  margin-right: 20px; /* Add margin between icons */
+
+/*.icon:last-child {
+  margin-right: 0; 
+}
+
+.icon:hover {
+  cursor: pointer; 
+}
+
+.iconimg {
+  font-size: 20px;
+}
+
+.counter {
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+}
+
+.gap {
+  width: 20px; /* Adjust the width of the gap */
+
+
+/*.notification-box,
+.message-box {
+  position: absolute;
+  top: calc(100% + 10px); 
+  right: 20px; 
+  width: 200px;
+  max-height: 300px; 
+  overflow-y: auto; 
+  background-color: black;
+  border-radius: 5px; 
+  padding: 10px; 
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+  z-index: 1001;
+
+
+.notification-box::-webkit-scrollbar,
+.message-box::-webkit-scrollbar {
+  width: 6px; 
+}
+
+.notification-box::-webkit-scrollbar-thumb,
+.message-box::-webkit-scrollbar-thumb {
+  background-color: #555; 
+  border-radius: 3px; 
+}
+
+/* 
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 10px; 
+  }
+  
+  .logo {
+    font-size: 20px; 
+  }
+  
+  .icons {
+    gap: 15px; 
+  }
+  
+  .counter {
+    font-size: 10px; 
+    width: 10px;
+    height: 10px; 
+    top: -3px; 
+    right: -3px;
+  }*/
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0b0b0b;
+  color: #fff;
+  padding: 0 20px;
+  z-index: 1000;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.icons {
+  display: flex;
+  gap: 80px; 
+  
+}
+
+.icon {
+  position: relative;
+}
+
+.iconimg {
+  font-size: 20px;
+}
+
+.counter {
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+}
+
+.gap {
+  width: 20px; 
+}
+
+.profile-picture.small {
+  width: 30px;
+  height: 30px;
+  margin-top: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+li {
+  list-style-type: none;
+}
+
+.profile-upload-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid black;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content {
+  text-align: center;
+}
+
+h6 {
+  color: red;
+}
+
+input[type="file"] {
+  display: block;
+  margin: 10px auto;
+}
+
+button {
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+
+
+
+
+
+.notification-box {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 200px;
+  height: 100%;
+  background-color: black;
+}
+  
+
+.message-box {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 200px;
+  height: 100%;
+  background-color: black;
+}
+
+
+
+
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 10px; 
+  }
+  
+  .logo {
+    font-size: 20px; 
+  }
+  
+  .icons {
+    gap: 20px; 
+  }
+  
+  .counter {
+    font-size: 10px; 
+    width: 10px; 
+    height: 10px; 
+    top: -3px; 
+    right: -3px; 
+  }
+
+  .profile-picture.small {
+    width: 30px;
+    height: 30px;
+  }
+}

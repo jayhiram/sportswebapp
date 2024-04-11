@@ -15,6 +15,7 @@ const Gallery = () => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get('/api/posts');
+        console.log(response.data);
         setPosts(response.data);
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -30,6 +31,10 @@ const Gallery = () => {
     setSelectedFile(e.target.files[0]);
   };
 
+  
+
+
+
   const handleUpload = async () => {
     try {
       setIsPosting(true);
@@ -39,12 +44,18 @@ const Gallery = () => {
       formData.append('caption', caption);
 
       // Upload file and caption to server
-      await axios.post('/api/posts', formData, {
+      const response = await axios.post('/api/posts', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
+      // Update the posts state to include the newly uploaded post
+      setPosts([response.data, ...posts]);
+
+      // Reset file and caption state
+      setSelectedFile(null);
+      setCaption('');
       setIsPosting(false);
     } catch (error) {
       console.error('Error uploading post:', error);
@@ -54,12 +65,10 @@ const Gallery = () => {
 
   const handleLike = async (postId) => {
     try {
-      const response = await axios.put(`/api/posts/${postId}/like`);
+      await axios.put(`/api/posts/${postId}/like`);
       setPosts(prevPosts =>
         prevPosts.map(post =>
-          post.id === postId && !post.liked
-            ? { ...post, likes: post.likes + 1, liked: true }
-            : post
+          post.id === postId ? { ...post, likes: post.likes + 1, liked: true } : post
         )
       );
     } catch (error) {
@@ -76,7 +85,6 @@ const Gallery = () => {
     document.body.removeChild(link);
   };
 
-
   return (
     <div className="gallery">
       <div className="header">
@@ -91,10 +99,8 @@ const Gallery = () => {
             {/* Display selected file preview and caption input */}
             {selectedFile && (
               <div>
-                <img src={URL.createObjectURL(selectedFile)} alt="Selected File" 
-                className="selected-file-preview" />
-                <input type="text" value={caption} onChange={(e) => setCaption(e.target.value)} 
-                placeholder="Write a caption..." />
+                <img src={URL.createObjectURL(selectedFile)} alt="Selected File" className="selected-file-preview" />
+                <input type="text" value={caption} onChange={(e) => setCaption(e.target.value)} placeholder="Write a caption..." />
                 <button onClick={handleUpload}>{isPosting ? 'Posting...' : 'Post'}</button>
               </div>
             )}
@@ -110,18 +116,22 @@ const Gallery = () => {
             <div className="user-info">
               <span className="full-name">Kilifi Sports</span>
               <div className="date-info">
-                <span className="post-date">{post.createdAt}</span>
+        
+              <span className="post-date">{post.createdAt}</span>
               </div>
             </div>
+
+
             {/* Display caption and post type */}
-            {post.caption && <h3>{post.caption}</h3>}
-            <div className="post-meta">
-              <span className="post-type">{post.type === 'image' ? 'Photo' : 'Video'}</span>
-            </div>
-            {/* Display image or video */}
+{post.caption && <h3>{post.caption}</h3>}
+<div className="post-meta">
+{/* Display image or video */}
             {post.type === 'image' && <img src={post.url} alt="" />}
             {post.type === 'video' && <video controls><source src={post.url} type="video/mp4" /></video>}
+  
+</div>
             
+
             {/* Like and download buttons */}
             <div className="reactions">
               <button disabled={post.liked} onClick={() => handleLike(post.id)}>

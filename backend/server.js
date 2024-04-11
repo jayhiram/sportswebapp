@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const multer = require('multer');
 const pool = require('./db');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const PORT = process.env.PORT || 3009;
 
@@ -30,16 +31,14 @@ app.use((req, res, next) => {
 // Configure multer for handling file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/profile-pictures'); // Destination folder for storing uploaded files
+    cb(null, 'uploads'); // Destination folder for storing uploaded files
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname); // Use the original filename for storing
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname)); // Generate unique filename
   }
 });
 const upload = multer({ storage: storage });
-
-
-
 
 
 
@@ -99,6 +98,29 @@ function getUsersInRoom(room) {
     return [];
   }
 }
+
+
+
+
+
+// API endpoint to get user names
+app.get('/api/users', async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query('SELECT fullName FROM users');
+    connection.release();
+    res.json(rows);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
 
 // Login endpoint
 app.post('/login', async (req, res) => {
@@ -165,40 +187,149 @@ app.post('/signup', async (req, res) => {
 
 
 
-
-
-
-
-
+// API endpoint to fetch all posts
+app.get('/api/posts', async (req, res) => {
+  try {
+    // Fetch all posts from the database
+    const [posts] = await pool.query('SELECT * FROM posts');
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error('Error retrieving posts:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // API endpoint to upload a post
-app.post('/api/posts', upload.single('file'), (req, res) => {
+app.post('/api/posts', upload.single('file'), async (req, res) => {
   try {
     const { caption } = req.body;
     const file = req.file;
 
-    // Ensure there's a valid file uploaded
     if (!file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    // Insert post data into MySQL
-    const query = 'INSERT INTO posts (file, caption) VALUES (?, ?)';
-    pool.query(query, [file.filename, caption], (err, result) => {
-      if (err) {
-        console.error('Error uploading post to MySQL:', err);
-        res.status(500).json({ message: 'Internal server error' });
-        return;
-      }
-      console.log('Post uploaded successfully');
-      res.status(201).json({ message: 'Post uploaded successfully' });
-    });
+    const query = 'INSERT INTO posts (file_path, caption) VALUES (?, ?)';
+    const [result] = await pool.query(query, [file.path, caption]);
+
+    // Create the new post object to return to the client
+    const newPost = {
+      id: result.insertId,
+      url: file.path,
+      caption: caption,
+      type: file.mimetype.startsWith('image') ? 'image' : 'video',
+      likes: 0,
+      liked: false,
+      createdAt: new Date().getTime(),
+    };
+
+    res.status(201).json(newPost);
   } catch (error) {
     console.error('Error uploading post:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
 
+// API endpoint to handle liking a post
+app.put('/api/posts/:id/like', async (req, res) => {
+  const postId = req.params.id;
+
+  try {
+    // Update the 'likes' count for the post in the database
+    await pool.query('UPDATE posts SET likes = likes + 1 WHERE id = ?', [postId]);
+    res.status(200).json({ message: 'Post liked' });
+  } catch (error) {
+    console.error('Error updating like:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{/*// API endpoint to upload a post
+app.post('/api/posts', upload.single('file'), async (req, res) => {
+  try {
+    const { caption } = req.body;
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const query = 'INSERT INTO posts (file_path, caption) VALUES (?, ?)';
+    const [result] = await pool.query(query, [file.path, caption]);
+
+    // Create the new post object to return to the client
+    const newPost = {
+      id: result.insertId,
+      url: file.path,
+      caption: caption,
+      type: file.mimetype.startsWith('image') ? 'image' : 'video',
+      likes: 0,
+      liked: false,
+      createdAt: new Date().toLocaleString(),
+    };
+
+    res.status(201).json(newPost);
+  } catch (error) {
+    console.error('Error uploading post:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});*/}
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Add authorization middleware
+const authMiddleware = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next(); // If user is admin, proceed to the next middleware
+  } else {
+    res.status(403).json({ error: 'Unauthorized' }); // If not admin, return 403 Forbidden error
+  }
+};
 
 
 
@@ -238,7 +369,7 @@ app.delete('/api/events/:id', async (req, res) => {
 });
 
 // Route to create a new event
-app.post('/api/events', async (req, res) => {
+app.post('/api/events', authMiddleware, async (req, res) => {
   const { name, date, time, location, sport } = req.body;
 
   if (!name || !date || !time || !location || !sport) {

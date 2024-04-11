@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CreateEvent from '../components/CreateEvent';
@@ -32,4 +33,4 @@ const UpcomingEvents = () => {
   );
 };
 
-export default UpcomingEvents;
+export default UpcomingEvents

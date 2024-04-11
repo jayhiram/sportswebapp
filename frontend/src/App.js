@@ -11,6 +11,8 @@ import AuthPage from './pages/AuthPage';
 import UserProfile from './components/UserProfile';
 import ForumPage from './pages/ForumPage';
 import Gallery from './components/Gallery'; // Import the Gallery component
+import Logout from './components/Logout';
+import UserList from './components/UserList';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
@@ -39,6 +41,8 @@ function App() {
           <Route path="/signup/login" element={<AuthPage setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/userprofile" element={<UserProfile />} />
           <Route path="/forums" element={<ForumPage />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/users" element={<UserList />} />
           <Route
             path="/gallery"
             element={isLoggedIn ? <Gallery /> : <Navigate to="/signup/login" />} // Conditional rendering for Gallery component

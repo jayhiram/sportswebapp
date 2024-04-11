@@ -85,6 +85,8 @@ const Notificationbar = ({ onSideItemClick }) => {
         <span className="icon-text"></span>
       </div>
 
+      
+
       <div className="icons">
         <div className="icon" style={{ marginRight: '10px' }} onClick={handleNotificationClick}>
           <FontAwesomeIcon icon={faBell} className="iconimg" />

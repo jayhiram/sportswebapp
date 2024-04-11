@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../styles/CreateEvent.css'
 import axios from 'axios';
 
 const CreateEvent = ({ setEvents }) => {
@@ -33,7 +34,7 @@ const CreateEvent = ({ setEvents }) => {
   };
 
   return (
-    <div>
+    <div className='create-event-container'>
       <h2>Create Event</h2>
       <form onSubmit={handleFormSubmit}>
         <input type="text" placeholder="Event Name" name="name" value={formData.name} onChange={handleInputChange} required />

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faEnvelope, faCog, faUser } from '@fortawesome/free-solid-svg-icons';
-import '../styles/Notificationbar.css';
+import '../styles/Notificationbar.css'
 
 const Notificationbar = ({ onSideItemClick }) => {
   const [notificationCount, setNotificationCount] = useState(0);

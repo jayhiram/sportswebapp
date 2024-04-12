@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faCamera, faDownload } from '@fortawesome/free-solid-svg-icons';
+import moment from 'moment';
 import '../styles/Gallery.css';
 
 const Gallery = () => {
@@ -31,10 +32,6 @@ const Gallery = () => {
     setSelectedFile(e.target.files[0]);
   };
 
-  
-
-
-
   const handleUpload = async () => {
     try {
       setIsPosting(true);
@@ -43,17 +40,14 @@ const Gallery = () => {
       formData.append('file', selectedFile);
       formData.append('caption', caption);
 
-      // Upload file and caption to server
       const response = await axios.post('/api/posts', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      // Update the posts state to include the newly uploaded post
       setPosts([response.data, ...posts]);
 
-      // Reset file and caption state
       setSelectedFile(null);
       setCaption('');
       setIsPosting(false);
@@ -85,18 +79,20 @@ const Gallery = () => {
     document.body.removeChild(link);
   };
 
+  const formatDate = (timestamp) => {
+    return moment(timestamp).format('MMMM D, YYYY h:mm A');
+  };
+
   return (
     <div className="gallery">
       <div className="header">
         <h2>Kilifi Sport Hub Gallery</h2>
         {userRole === 'admin' && (
           <div className="upload-container">
-            {/* File upload input */}
             <label htmlFor="file-upload" className="file-upload-label">
               <FontAwesomeIcon icon={faCamera} /> Upload Photo/Video
               <input id="file-upload" type="file" accept="image/*,video/*" onChange={handleFileChange} style={{ display: 'none' }} />
             </label>
-            {/* Display selected file preview and caption input */}
             {selectedFile && (
               <div>
                 <img src={URL.createObjectURL(selectedFile)} alt="Selected File" className="selected-file-preview" />
@@ -109,30 +105,33 @@ const Gallery = () => {
       </div>
 
       <div className="gallery-container">
-        {/* Display posts */}
         {posts.map(post => (
           <div className="post" key={post.id}>
-            {/* User info */}
             <div className="user-info">
               <span className="full-name">Kilifi Sports</span>
               <div className="date-info">
-        
-              <span className="post-date">{post.createdAt}</span>
+                <span className="post-date">{formatDate(post.createdAt)}</span>
               </div>
             </div>
 
+            {post.caption && <h3>{post.caption}</h3>}
 
-            {/* Display caption and post type */}
-{post.caption && <h3>{post.caption}</h3>}
-<div className="post-meta">
-{/* Display image or video */}
-            {post.type === 'image' && <img src={post.url} alt="" />}
-            {post.type === 'video' && <video controls><source src={post.url} type="video/mp4" /></video>}
-  
-</div>
-            
 
-            {/* Like and download buttons */}
+            <div className="post-meta">
+              {post.type === 'image' && (
+                <>
+                  <img src={post.url} alt="" />
+                </>
+              )}
+              {post.type === 'video' && (
+                <>
+                  <video controls>
+                    <source src={post.url} type="video/mp4" />
+                  </video>
+                </>
+              )}
+            </div>
+
             <div className="reactions">
               <button disabled={post.liked} onClick={() => handleLike(post.id)}>
                 <FontAwesomeIcon icon={faThumbsUp} /> {post.likes}

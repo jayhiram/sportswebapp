@@ -20,6 +20,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(cors({
+  origin: 'http://localhost:3000' // Replace with the client's origin (domain and port)
+}));
+
+// Serve static files from the 'uploads' folder
+app.use('/uploads', express.static(path.join(__dirname, 
+  'uploads')));
+
 
 // Middleware to handle CORS
 app.use((req, res, next) => {
@@ -209,19 +217,22 @@ app.post('/api/posts', upload.single('file'), async (req, res) => {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    const query = 'INSERT INTO posts (file_path, caption) VALUES (?, ?)';
+    const query = 'INSERT INTO posts (file_path, caption, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)';
     const [result] = await pool.query(query, [file.path, caption]);
 
     // Create the new post object to return to the client
     const newPost = {
       id: result.insertId,
-      url: file.path,
+      url: file.path, // Construct the URL with the server's base URL
       caption: caption,
       type: file.mimetype.startsWith('image') ? 'image' : 'video',
       likes: 0,
       liked: false,
-      createdAt: new Date().getTime(),
+      createdAt: new Date().toISOString(),
     };
+
+
+    console.log('File path:', file.path); 
 
     res.status(201).json(newPost);
   } catch (error) {
@@ -229,6 +240,9 @@ app.post('/api/posts', upload.single('file'), async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
+
 
 // API endpoint to handle liking a post
 app.put('/api/posts/:id/like', async (req, res) => {
@@ -253,160 +267,35 @@ app.put('/api/posts/:id/like', async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{/*// API endpoint to upload a post
-app.post('/api/posts', upload.single('file'), async (req, res) => {
+// Routes
+app.get('/api/events', async (req, res) => { // Use async function
   try {
-    const { caption } = req.body;
-    const file = req.file;
-
-    if (!file) {
-      return res.status(400).json({ message: 'No file uploaded' });
-    }
-
-    const query = 'INSERT INTO posts (file_path, caption) VALUES (?, ?)';
-    const [result] = await pool.query(query, [file.path, caption]);
-
-    // Create the new post object to return to the client
-    const newPost = {
-      id: result.insertId,
-      url: file.path,
-      caption: caption,
-      type: file.mimetype.startsWith('image') ? 'image' : 'video',
-      likes: 0,
-      liked: false,
-      createdAt: new Date().toLocaleString(),
-    };
-
-    res.status(201).json(newPost);
+    const connection = await pool.getConnection();
+    const [results] = await connection.query('SELECT * FROM events');
+    connection.release();
+    res.json(results);
   } catch (error) {
-    console.error('Error uploading post:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});*/}
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Add authorization middleware
-const authMiddleware = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
-    next(); // If user is admin, proceed to the next middleware
-  } else {
-    res.status(403).json({ error: 'Unauthorized' }); // If not admin, return 403 Forbidden error
-  }
-};
-
-
-
-
-
-
-
-
-
-/// Route to edit an existing event
-app.put('/api/events/:id', async (req, res) => {
-  const eventId = req.params.id;
-  const { name, date, time, location, sport } = req.body;
-
-  try {
-    // Perform database update operation to edit the event
-    await pool.query('UPDATE events SET name = ?, date = ?, time = ?, location = ?, sport = ? WHERE id = ?', [name, date, time, location, sport, eventId]);
-    res.status(200).json({ message: 'Event updated successfully' });
-  } catch (error) {
-    console.error('Error updating event:', error);
+    console.error('Error fetching events:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// Route to delete an event
-app.delete('/api/events/:id', async (req, res) => {
-  const eventId = req.params.id;
-
-  try {
-    // Perform database delete operation to delete the event
-    await pool.query('DELETE FROM events WHERE id = ?', [eventId]);
-    res.status(200).json({ message: 'Event deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting event:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Route to create a new event
-app.post('/api/events', authMiddleware, async (req, res) => {
+app.post('/api/events', async (req, res) => { // Use async function
   const { name, date, time, location, sport } = req.body;
-
-  if (!name || !date || !time || !location || !sport) {
-    return res.status(400).json({ error: 'All fields are required' });
-  }
-
   try {
-    // Insert the new event into the database
-    const [result] = await pool.query('INSERT INTO events (name, date, time, location, sport) VALUES (?, ?, ?, ?, ?)', [name, date, time, location, sport]);
-    const newEvent = {
-      id: result.insertId,
-      name,
-      date,
-      time,
-      location,
-      sport
-    };
+    const connection = await pool.getConnection();
+    const [result] = await connection.query(
+      'INSERT INTO events (name, date, time, location, sport) VALUES (?, ?, ?, ?, ?)',
+      [name, date, time, location, sport]
+    );
+    connection.release();
+    const newEvent = { id: result.insertId, name, date, time, location, sport };
     res.status(201).json(newEvent);
   } catch (error) {
     console.error('Error creating event:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-// Route to retrieve all events
-app.get('/api/events', async (req, res) => {
-  try {
-    // Fetch all events from the database
-    const [events] = await pool.query('SELECT * FROM events');
-    res.status(200).json(events);
-  } catch (error) {
-    console.error('Error retrieving events:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-
 
 
 
@@ -439,5 +328,7 @@ app.post('/api/events/:id/register', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

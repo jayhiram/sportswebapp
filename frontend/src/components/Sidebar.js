@@ -1,13 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faComments, faUser, faCalendarAlt, faImages, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faComments, faCalendarAlt, faImages, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Sidebar.css';
 
 const Sidebar = ({ onSidebarItemClick }) => {
   return (
     <div className="sidebar">
       <ul>
+
+
+      
         <li onClick={() => onSidebarItemClick('users')}>
           <Link to="/users">
             <FontAwesomeIcon icon={faUsers} />

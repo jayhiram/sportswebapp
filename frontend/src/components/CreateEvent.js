@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../styles/CreateEvent.css'
+import '../styles/CreateEvent.css';
 import axios from 'axios';
 
 const CreateEvent = ({ setEvents }) => {
@@ -8,20 +8,20 @@ const CreateEvent = ({ setEvents }) => {
     date: '',
     time: '',
     location: '',
-    sport: ''
+    sport: '',
   });
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('/api/events', formData);
-      setEvents(prevEvents => [...prevEvents, response.data]); // Update events state with the newly created event
+      setEvents((prevEvents) => [...prevEvents, response.data]);
       setFormData({
         name: '',
         date: '',
         time: '',
         location: '',
-        sport: ''
+        sport: '',
       });
     } catch (error) {
       console.error('Error creating event:', error);

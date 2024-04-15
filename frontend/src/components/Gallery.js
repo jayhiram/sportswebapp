@@ -104,18 +104,19 @@ const Gallery = () => {
         )}
       </div>
 
+      
+        
       <div className="gallery-container">
         {posts.map(post => (
           <div className="post" key={post.id}>
             <div className="user-info">
               <span className="full-name">Kilifi Sports</span>
               <div className="date-info">
-                <span className="post-date">{formatDate(post.createdAt)}</span>
+                <span className="post-date">{formatDate(post.created_at)}</span>
               </div>
             </div>
 
             {post.caption && <h3>{post.caption}</h3>}
-
 
             <div className="post-meta">
               {post.type === 'image' && (
@@ -131,6 +132,7 @@ const Gallery = () => {
                 </>
               )}
             </div>
+            
 
             <div className="reactions">
               <button disabled={post.liked} onClick={() => handleLike(post.id)}>

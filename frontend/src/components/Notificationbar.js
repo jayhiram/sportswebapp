@@ -1,133 +1,113 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import io from 'socket.io-client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faEnvelope, faCog, faUser } from '@fortawesome/free-solid-svg-icons';
-import '../styles/Notificationbar.css'
+import { faBell } from '@fortawesome/free-solid-svg-icons';
+import '../styles/Notificationbar.css';
 
-const Notificationbar = ({ onSideItemClick }) => {
-  const [notificationCount, setNotificationCount] = useState(0);
-  const [messageCount, setMessageCount] = useState(0);
-  const [showNotificationBox, setShowNotificationBox] = useState(false);
-  const [showMessageBox, setShowMessageBox] = useState(false);
+const Notificationbar = () => {
   const [notifications, setNotifications] = useState([]);
-  const [socket, setSocket] = useState(null);
-  const [showProfileModal, setShowProfileModal] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(null);
+  const [showNotificationBox, setShowNotificationBox] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3001');
-    setSocket(newSocket);
+    const socket = io('http://localhost:3009', { transports: ['websocket'] });
 
-    newSocket.on('notification', (data) => {
-      console.log('Received notification:', data);
-      setNotificationCount(notificationCount + 1);
-      setNotifications([...notifications, data]);
+    socket.on('connect', () => {
+      console.log('WebSocket connection established');
     });
 
-    return () => {
-      newSocket.disconnect();
+    socket.on('newRegistration', (notification) => {
+      // Check if the notification is for the current user
+      
+        setNotifications((prevNotifications) => [...prevNotifications, notification]);
+        setUnreadNotifications((prevUnreadNotifications) => prevUnreadNotifications + 1);
+      
+    });
+  
+    socket.on('newEventCreated', (notification) => {
+      setNotifications((prevNotifications) => [...prevNotifications, notification]);
+      setUnreadNotifications((prevUnreadNotifications) => prevUnreadNotifications + 1);
+    });
+  
+
+
+    const fetchUnreadNotifications = async () => {
+      try {
+        const response = await axios.get('/api/notifications');
+        setNotifications(response.data);
+        setUnreadNotifications(response.data.filter((n) => !n.is_read).length);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
     };
-  }, [notificationCount, notifications]);
 
-  const handleNotificationClick = () => {
+    fetchUnreadNotifications();
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  // Inside handleNewNotification function
+const handleNewNotification = async (notification) => {
+  try {
+     // Format timestamp to MySQL datetime format
+     const timestamp = new Date(notification.timestamp).toISOString().slice(0, 19).replace('T', ' ');
+    // Save the notification in the database
+    await axios.post('/api/notifications', notification);
+    setNotifications((prevNotifications) => [...prevNotifications, notification]);
+    setUnreadNotifications((prevUnreadNotifications) => prevUnreadNotifications + 1);
+  } catch (error) {
+    console.error('Error saving notification:', error);
+  }
+};
+
+
+  const toggleNotificationBox = async () => {
     setShowNotificationBox(!showNotificationBox);
-    setNotificationCount(0); // Reset notification count when notification box is opened
+    if (!showNotificationBox) {
+      await markNotificationsAsRead();
+      setUnreadNotifications(0);
+    }
   };
 
-  const handleMessageClick = () => {
-    setShowMessageBox(!showMessageBox);
-    setMessageCount(0);
+  const markNotificationsAsRead = async () => {
+    try {
+      // Mark notifications as read in the database
+      await axios.put('/api/notifications/read');
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((n) => ({ ...n, is_read: true }))
+      );
+    } catch (error) {
+      console.error('Error marking notifications as read:', error);
+    }
   };
 
-  const handleUserIconClick = () => {
-    setShowProfileModal(true); // Show profile picture upload modal
-  };
-
-  const handleCloseProfileModal = () => {
-    setShowProfileModal(false); // Close profile picture upload modal
-  };
-
-  const handleProfilePictureChange = (e) => {
-    const file = e.target.files[0];
-    setProfilePicture(URL.createObjectURL(file)); // Store the URL of the uploaded picture
-  };
-
-  const handleSaveProfilePicture = () => {
-    // Perform logic to save the profile picture
-    // For now, just log the file object
-    console.log('Saving profile picture:', profilePicture);
-    // Close the modal
-    setShowProfileModal(false);
-    // Set the profile picture to be displayed in the navbar
-    setProfilePicture(profilePicture);
-  };
-
-  const emitNotificationAcknowledgement = () => {
-    // Emit an event to acknowledge the notifications
-    socket.emit('acknowledgeNotifications');
-    // Reset the notification count locally
-    setNotificationCount(0);
-  };
 
   return (
     <div className="navbar">
-      <div onClick={handleUserIconClick} className='profile-link'>
-        {/* Render the uploaded profile picture or default user icon */}
-        {profilePicture ? (
-          <img
-            src={profilePicture} 
-            alt="Profile" 
-            className={`profile-picture ${profilePicture && 'small'}`}
-          />
-        ) : (
-          <FontAwesomeIcon icon={faUser} />
-        )}
-        <span className="icon-text"></span>
-      </div>
-
-      
-
       <div className="icons">
-        <div className="icon" style={{ marginRight: '10px' }} onClick={handleNotificationClick}>
+        <div className="icon" style={{ marginRight: '10px' }} onClick={toggleNotificationBox}>
           <FontAwesomeIcon icon={faBell} className="iconimg" />
-          <div className="counter">{notificationCount}</div>
-        </div>
-        <div className="icon" style={{ marginRight: '10px' }} onClick={handleMessageClick}>
-          <FontAwesomeIcon icon={faEnvelope} className="iconimg" />
-          <div className="counter">{messageCount}</div>
-        </div>
-        <div className="icon">
-          <div className="icon" style={{ marginRight: '80px' }}>
-            <FontAwesomeIcon icon={faCog} className="iconimg" />
-          </div>
+          {unreadNotifications > 0 && (
+            <div className="counter">{unreadNotifications}</div>
+          )}
         </div>
       </div>
+
       {showNotificationBox && (
         <div className="notification-box">
-          {/* Render notifications */}
           {notifications.map((notification, index) => (
             <div key={index} className="notification-item">
-              {notification.message}
+              <div className="notification-header">
+                <span className="notification-sender">Server</span>
+                <span className="notification-title">Registration of Event</span>
+              </div>
+              <p>{notification.message}</p>
+              <span className="notification-timestamp">{notification.timestamp}</span>
             </div>
           ))}
-          {/* Add a button to acknowledge notifications */}
-          <button onClick={emitNotificationAcknowledgement}>Acknowledge</button>
-        </div>
-      )}
-      {showMessageBox && (
-        <div className="message-box">
-          {/* Message Box Content */}
-        </div>
-      )}
-      {/* Profile picture upload modal */}
-      {showProfileModal && (
-        <div className="profile-upload-modal">
-          <div className="modal-content">
-            <span className="close" onClick={handleCloseProfileModal}>&times;</span>
-            <h6>Upload Profile Picture</h6>
-            <input type="file" accept="image/*" onChange={handleProfilePictureChange} />
-            <button onClick={handleSaveProfilePicture}>Save</button>
-          </div>
         </div>
       )}
     </div>
@@ -135,3 +115,6 @@ const Notificationbar = ({ onSideItemClick }) => {
 };
 
 export default Notificationbar;
+
+
+

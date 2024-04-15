@@ -1,10 +1,9 @@
+// App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Notificationbar from './components/Notificationbar'; // Import Notificationbar
+import Notificationbar from './components/Notificationbar';
 import Sidebar from './components/Sidebar'; 
-import UpcomingEvents from './components/UpcomingEvents';
-
 import Footer from './components/Footer';
 import AboutUs from './components/AboutUs';
 import HomePage from './pages/HomePage';
@@ -16,6 +15,7 @@ import Logout from './components/Logout';
 import UserList from './components/UserList';
 import Events from './components/Events';
 
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
 
@@ -26,12 +26,9 @@ function App() {
   return (
     <Router>
       <div>
+        <Notificationbar />
         {isLoggedIn ? (
-          <>
-            {/* Pass onSidebarItemClick as a prop */}
-            <Notificationbar onSideItemClick={handleSidebarItemClick} />
-            <Sidebar onSidebarItemClick={handleSidebarItemClick} />
-          </>
+          <Sidebar onSidebarItemClick={handleSidebarItemClick} />
         ) : (
           <Navbar setIsLoggedIn={setIsLoggedIn} />
         )}
@@ -46,10 +43,7 @@ function App() {
           <Route path="/forums" element={<ForumPage />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/users" element={<UserList />} />
-          <Route
-            path="/gallery"
-            element={isLoggedIn ? <Gallery /> : <Navigate to="/signup/login" />} // Conditional rendering for Gallery component
-          />
+          <Route path="/gallery" element={isLoggedIn ? <Gallery /> : <Navigate to="/signup/login" />} />
         </Routes>
       </div>
     </Router>
@@ -57,4 +51,3 @@ function App() {
 }
 
 export default App;
-

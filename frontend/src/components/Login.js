@@ -11,17 +11,15 @@ const Login = ({ setIsLoggedIn }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('/login', { email, password });
-
-      if (response.status === 200) {
-        const { role } = response.data;
-        // Store role in local storage or state
-        localStorage.setItem('userRole', role);
-        setIsLoggedIn(true);
-        navigate('/gallery');
-      } else {
-        setError('Incorrect email or password');
-      }
+      const response = await axios.post('/login', {
+        email,
+        password,
+      });
+      const { userId, role } = response.data;
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('userRole', role);
+      setIsLoggedIn(true);
+      navigate('/gallery');
     } catch (error) {
       console.error('Error during login:', error);
       setError('Login failed');

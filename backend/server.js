@@ -1,19 +1,25 @@
 const express = require('express');
 const http = require('http');
-const socketIo = require('socket.io');
+const socketIO = require('socket.io');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const pool = require('./db');
 const bodyParser = require('body-parser');
 const path = require('path');
+const moment = require('moment');
 
 const PORT = process.env.PORT || 3009;
 
 const app = express();
 const server = http.createServer(app); // Create HTTP server
 
-const io = socketIo(server);
+const io = socketIO(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST']
+  }
+});
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -25,8 +31,7 @@ app.use(cors({
 }));
 
 // Serve static files from the 'uploads' folder
-app.use('/uploads', express.static(path.join(__dirname, 
-  'uploads')));
+app.use('/uploads', express.static('uploads'));
 
 
 // Middleware to handle CORS
@@ -35,20 +40,6 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
-
-// Configure multer for handling file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads'); // Destination folder for storing uploaded files
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname)); // Generate unique filename
-  }
-});
-const upload = multer({ storage: storage });
-
-
 
 
 // Define a global variable to store messages for each room
@@ -82,6 +73,15 @@ io.on('connection', (socket) => {
     }
     roomMessages[msg.room].push(msg);
   });
+
+
+  socket.on('notification', (data) => {
+    console.log('Received notification:', data);
+    io.emit('notification', data); // Broadcast the notification to all connected clients
+  });
+
+
+
 
   // Inside the 'disconnect' event handler
   socket.on('disconnect', () => {
@@ -195,17 +195,47 @@ app.post('/signup', async (req, res) => {
 
 
 
-// API endpoint to fetch all posts
+
+
+// Configure multer for handling file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Destination folder for storing uploaded files
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
+
+// Serve the uploaded files as static assets
+app.use('/uploads', express.static('uploads'));
+
+
+
+
+
+
 app.get('/api/posts', async (req, res) => {
   try {
-    // Fetch all posts from the database
-    const [posts] = await pool.query('SELECT * FROM posts');
-    res.status(200).json(posts);
+    const [posts] = await pool.query(
+      'SELECT id, file_path, caption, created_at, likes FROM posts ORDER BY created_at DESC'
+    );
+
+    const postsWithUrl = posts.map(post => ({
+      ...post,
+      url: `${req.protocol}://${req.get('host')}/uploads/${post.file_path}`,
+      type: post.file_path.endsWith('.mp4') ? 'video' : 'image',
+    }));
+
+    res.status(200).json(postsWithUrl);
   } catch (error) {
     console.error('Error retrieving posts:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // API endpoint to upload a post
 app.post('/api/posts', upload.single('file'), async (req, res) => {
@@ -217,22 +247,21 @@ app.post('/api/posts', upload.single('file'), async (req, res) => {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    const query = 'INSERT INTO posts (file_path, caption, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)';
-    const [result] = await pool.query(query, [file.path, caption]);
+    // Replace 'userId' with the actual user ID from the authenticated user
+    const userId = 1; // Example user ID
 
-    // Create the new post object to return to the client
+    const query = 'INSERT INTO posts (user_id, file_path, caption, created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)';
+    const [result] = await pool.query(query, [userId, file.filename, caption]);
+
     const newPost = {
       id: result.insertId,
-      url: file.path, // Construct the URL with the server's base URL
+      userId,
+      url: `${req.protocol}://${req.get('host')}/uploads/${file.filename}`,
       caption: caption,
       type: file.mimetype.startsWith('image') ? 'image' : 'video',
       likes: 0,
-      liked: false,
       createdAt: new Date().toISOString(),
     };
-
-
-    console.log('File path:', file.path); 
 
     res.status(201).json(newPost);
   } catch (error) {
@@ -260,39 +289,48 @@ app.put('/api/posts/:id/like', async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-// Routes
-app.get('/api/events', async (req, res) => { // Use async function
+// API endpoint to save notification in the database
+app.post('/api/notifications', async (req, res) => {
+  const { message, timestamp } = req.body;
   try {
-    const connection = await pool.getConnection();
-    const [results] = await connection.query('SELECT * FROM events');
-    connection.release();
-    res.json(results);
+    // Replace 'userId' with the actual user ID from the authenticated user
+    const userId = 1; // Example user ID
+    await pool.query('INSERT INTO user_notifications (user_id, message, timestamp) VALUES (?, ?, ?)', 
+    [userId, message, timestamp]);
+    res.status(201).json({ message: 'Notification saved successfully' });
   } catch (error) {
-    console.error('Error fetching events:', error);
+    console.error('Error saving notification:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-app.post('/api/events', async (req, res) => { // Use async function
-  const { name, date, time, location, sport } = req.body;
+
+
+// API endpoint to fetch unread notifications for the current user
+app.get('/api/notifications', async (req, res) => {
   try {
-    const connection = await pool.getConnection();
-    const [result] = await connection.query(
-      'INSERT INTO events (name, date, time, location, sport) VALUES (?, ?, ?, ?, ?)',
-      [name, date, time, location, sport]
+    // Replace 'userId' with the actual user ID from the authenticated user
+    const userId = 1; // Example user ID
+    const [notifications] = await pool.query(
+      'SELECT * FROM user_notifications WHERE user_id = ? AND is_read = 0',
+      [userId]
     );
-    connection.release();
-    const newEvent = { id: result.insertId, name, date, time, location, sport };
-    res.status(201).json(newEvent);
+    res.json(notifications);
   } catch (error) {
-    console.error('Error creating event:', error);
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// API endpoint to mark all notifications as read for the current user
+app.put('/api/notifications/read', async (req, res) => {
+  try {
+    // Replace 'userId' with the actual user ID from the authenticated user
+    const userId = 1; // Example user ID
+    await pool.query('UPDATE user_notifications SET is_read = 1 WHERE user_id = ?', [userId]);
+    res.json({ message: 'Notifications marked as read' });
+  } catch (error) {
+    console.error('Error marking notifications as read:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -304,7 +342,12 @@ app.post('/api/events', async (req, res) => { // Use async function
 
 
 
-/// Route to handle event registration
+
+
+
+
+
+// API endpoint to handle event registration
 app.post('/api/events/:id/register', async (req, res) => {
   const eventId = req.params.id;
   const { name, email, phoneNumber } = req.body;
@@ -321,7 +364,21 @@ app.post('/api/events/:id/register', async (req, res) => {
     const eventSport = eventDetails[0].sport;
 
     // Insert registration details into the database
-    await pool.query('INSERT INTO event_registrations (event_id, name, email, phone_number, event_name, event_date, event_sport) VALUES (?, ?, ?, ?, ?, ?, ?)', [eventId, name, email, phoneNumber, eventName, eventDate, eventSport]);
+    await pool.query('INSERT INTO event_registrations (event_id, name, email, phone_number, event_name, event_date, event_sport) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+    [eventId, name, email, phoneNumber, eventName, eventDate, eventSport]);
+    
+
+    // Insert a new notification for the registered user
+    const userId = 1; // Replace with the actual user ID
+    await pool.query('INSERT INTO user_notifications (user_id, message, timestamp) VALUES (?, ?, CURRENT_TIMESTAMP)', 
+    [userId, `${name} has registered for the event.`]);
+    
+
+
+
+     // Emit 'newRegistration' event
+     io.emit('newRegistration', { message: `${name} has registered for the event.`, timestamp: new Date().toISOString() });
+    
     res.status(200).json({ message: 'Registration successful' });
   } catch (error) {
     console.error('Error registering for event:', error);
@@ -331,4 +388,53 @@ app.post('/api/events/:id/register', async (req, res) => {
 
 
 
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Routes to handle event creation
+app.get('/api/events', async (req, res) => { // Use async function
+  try {
+    const connection = await pool.getConnection();
+    const [results] = await connection.query('SELECT * FROM events');
+    connection.release();
+    res.json(results);
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+app.post('/api/events', async (req, res) => { // Use async function
+  const { name, date, time, location, sport } = req.body;
+
+  //const timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+  //io.emit('newRegistration', { message: `${name} has registered for the event.`, timestamp });
+  //res.json({ success: true });
+
+
+  try {
+    const connection = await pool.getConnection();
+    const [result] = await connection.query(
+      'INSERT INTO events (name, date, time, location, sport) VALUES (?, ?, ?, ?, ?)',
+      [name, date, time, location, sport]
+    );
+
+
+
+
+    connection.release();
+    const newEvent = { id: result.insertId, name, date, time, location, sport };
+    res.status(201).json(newEvent);
+    // Inside the POST '/api/events' endpoint after successfully creating an event
+    io.emit('newEventCreated', { message: 'Check your upcoming events, we have added a new event' });
+  } catch (error) {
+    console.error('Error creating event:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`)); 

@@ -13,9 +13,11 @@ const Events = () => {
     phoneNumber: '',
   });
   const [errors, setErrors] = useState({});
-  const [registrationEventId, setRegistrationEventId] = useState(null); // New state variable
+  const [registrationEventId, setRegistrationEventId] = useState(null);
   const [registrationMessage, setRegistrationMessage] = useState('');
+ 
 
+ 
   const fetchEvents = async () => {
     try {
       const response = await axios.get('/api/events');
@@ -26,15 +28,7 @@ const Events = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('/api/events');
-        setEvents(response.data);
-      } catch (error) {
-        console.error('Error fetching events:', error);
-      }
-    };
-    fetchData();
+    fetchEvents();
 
     const role = localStorage.getItem('userRole');
     setUserRole(role || '');
@@ -57,17 +51,17 @@ const Events = () => {
     try {
       const response = await axios.post('/api/events', formData);
       setEvents([...events, response.data]);
-      setFormData({ name: '', email: '', phoneNumber: '' });
+      setFormData({ name: '', date: '', time: '', location: '', sport: '' }); // Clear input fields
+     
     } catch (error) {
       console.error('Error creating event:', error);
     }
   };
+  
 
   const handleRegisterEvent = (eventId) => {
-    setRegistrationEventId(eventId); // Set the registrationEventId to the clicked event's ID
+    setRegistrationEventId(eventId);
   };
-
-
 
   const handleRegistrationSubmit = async (eventId) => {
     let valid = true;
@@ -93,9 +87,10 @@ const Events = () => {
       await axios.post(`/api/events/${eventId}/register`, formData);
       setFormData({ name: '', email: '', phoneNumber: '' });
       setRegistrationMessage('Registered successfully for ' + events.find(event => event.id === eventId).name);
-      setRegistrationEventId(null); // Reset registrationEventId after successful registration
+      setRegistrationEventId(null);
       setTimeout(() => setRegistrationMessage(''), 5000);
       fetchEvents();
+
     } catch (error) {
       console.error('Error submitting registration:', error);
     }

@@ -1,0 +1,66 @@
+/* Support.css */
+
+.support {
+    background-color: #f8f8f8;
+    padding: 40px 0;
+  }
+  
+  .support-container {
+    max-width: 1000px;
+    margin-top: 200px;
+    margin-left: 80px;
+    
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  
+  .support-section {
+    flex-basis: 30%;
+    margin-bottom: 30px;
+  }
+  
+  .support-section h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .social-media ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+  }
+  
+  .social-media li {
+    margin-right: 20px;
+  }
+  
+  .social-media a {
+    color: #333;
+    font-size: 24px;
+    transition: color 0.3s;
+  }
+  
+  .social-media a:hover {
+    color: #007bff;
+  }
+  
+  .contact-help p {
+    margin-bottom: 10px;
+  }
+  
+  .contact-help a {
+    color: #333;
+    text-decoration: none;
+    margin-left: 5px;
+    transition: color 0.3s;
+  }
+  
+  .contact-help a:hover {
+    color: #007bff;
+  }
+  
+  .contact-help .fa-whatsapp,
+  .contact-help .fa-phone {
+    color: #28a745;
+  }

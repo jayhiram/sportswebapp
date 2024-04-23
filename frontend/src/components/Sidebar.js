@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faComments, faCalendarAlt, faImages,faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle, faComments, faCalendarAlt, faImages,faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Sidebar.css';
 
 const Sidebar = ({ onSidebarItemClick }) => {
@@ -12,9 +12,9 @@ const Sidebar = ({ onSidebarItemClick }) => {
 
       
         <li onClick={() => onSidebarItemClick('users')}>
-          <Link to="/users">
-            <FontAwesomeIcon icon={faUsers} />
-            <span className="icon-text">Users</span>
+          <Link to="/support">
+            <FontAwesomeIcon icon={faQuestionCircle} />
+            <span className="icon-text">Support</span>
           </Link>
         </li>
         <li onClick={() => onSidebarItemClick('forums')}>

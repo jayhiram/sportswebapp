@@ -1,6 +1,6 @@
 import React from 'react';
 
-import privatechats from '../components/images/privatechats.jpg';
+import upcomingevents from '../components/images/upcomingevents.png';
 import forum from '../components/images/forum.jpg';
 import gallery from '../components/images/gallery.jpg';
 import '../styles/CallToAction.css'
@@ -14,11 +14,11 @@ const CallToAction = () => {
                     By becoming a member of Kilifi Sport Hub, you unlock exclusive benefits:</p>
                 <ul className="benefits-list">
                     <li>
-                        <img src={privatechats} alt="Private Chats" />
+                        <img src={upcomingevents} alt="Private Chats" />
                         <div>
-                            <h3>Private Chats</h3>
-                            <p>Connect with other members privately, discuss sports strategies, 
-                                share tips, and build friendships.</p>
+                            <h3>Upcoming-Events</h3>
+                            <p>Find out about upcoming events!From sports strategies to tips and tricks, 
+                                join in to connect with us,Register for upcoming events.</p>
                         </div>
                     </li>
                     <li>

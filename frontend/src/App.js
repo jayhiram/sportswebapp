@@ -12,8 +12,9 @@ import UserProfile from './components/UserProfile';
 import ForumPage from './pages/ForumPage';
 import Gallery from './components/Gallery'; 
 import Logout from './components/Logout';
-import UserList from './components/UserList';
 import Events from './components/Events';
+import FeaturedSports from './components/FeaturedSports';
+import Support from './components/Footer';
 
 
 function App() {
@@ -36,13 +37,14 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/sports" element={<FeaturedSports />} />
           
           <Route path="/support" element={<Footer />} />
           <Route path="/signup/login" element={<AuthPage setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/userprofile" element={<UserProfile />} />
           <Route path="/forums" element={<ForumPage />} />
           <Route path="/logout" element={<Logout />} />
-          <Route path="/users" element={<UserList />} />
+          <Route path="/support" element={<Support />} />
           <Route path="/gallery" element={isLoggedIn ? <Gallery /> : <Navigate to="/signup/login" />} />
         </Routes>
       </div>

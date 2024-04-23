@@ -1,6 +1,6 @@
 import React from 'react';
 import HeroSection from '../components/HeroSection';
-import UpcomingEvents from '../components/UpcomingEvents';
+
 import FeaturedSports from '../components/FeaturedSports';
 import CallToAction from '../components/CallToAction';
 import Footer from '../components/Footer';
@@ -11,7 +11,7 @@ function HomePage() {
     <div>
       
       <HeroSection />
-      <UpcomingEvents />
+      
       <FeaturedSports />
       <AboutUs />
       <CallToAction />

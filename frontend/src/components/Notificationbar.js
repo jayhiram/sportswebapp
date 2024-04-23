@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell } from '@fortawesome/free-solid-svg-icons';
+import { faBell,faHome } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Notificationbar.css';
 
 const Notificationbar = () => {
@@ -88,6 +88,7 @@ const handleNewNotification = async (notification) => {
   return (
     <div className="navbar">
       <div className="icons">
+      <FontAwesomeIcon icon={faHome} className="iconimg" />
         <div className="icon" style={{ marginRight: '10px' }} onClick={toggleNotificationBox}>
           <FontAwesomeIcon icon={faBell} className="iconimg" />
           {unreadNotifications > 0 && (
